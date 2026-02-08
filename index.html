@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>TOEIC Vocabulary Flashcard</title>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXX');
+</script>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+* { 
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  color: #0f172a;
+  background:
+    radial-gradient(1200px 600px at 20% 10%, rgba(59,130,246,0.18), transparent 60%),
+    radial-gradient(900px 500px at 90% 20%, rgba(236,72,153,0.14), transparent 55%),
+    radial-gradient(900px 600px at 30% 95%, rgba(34,197,94,0.10), transparent 55%),
+    linear-gradient(180deg, #f8fafc, #eef2ff);
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 36px 24px;
+}
+
+.quiz-box {
+  width: min(720px, 100%);
+  background: rgba(255,255,255,0.86);
+  border: 1px solid rgba(148,163,184,0.35);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 32px;
+  border-radius: 24px;
+  box-shadow:
+    0 30px 70px rgba(15, 23, 42, 0.18),
+    0 1px 0 rgba(255,255,255,0.6) inset;
+}
+
+h1 {
+  text-align: center;
+  margin: 2px 0 8px 0;
+  font-size: 28px;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  margin: 0 0 20px 0;
+  text-align: center;
+  color: rgba(15,23,42,0.7);
+  font-size: 14px;
+}
+
+.start-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.section-title {
+  margin-top: 4px;
+  font-weight: 700;
+  color: rgba(15,23,42,0.76);
+  font-size: 14px;
+}
+
+.mode-btn {
+  width: 100%;
+  padding: 14px 16px;
+  margin-top: 12px;
+  border: 1px solid rgba(2,6,23,0.08);
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  background: linear-gradient(180deg, rgba(37,99,235,0.95), rgba(29,78,216,0.98));
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(37,99,235,0.22);
+  transition: transform 120ms ease, box-shadow 120ms ease, filter 120ms ease;
+}
+
+.mode-btn:nth-child(2) {
+  background: linear-gradient(180deg, rgba(147,51,234,0.92), rgba(109,40,217,0.98));
+  box-shadow: 0 10px 24px rgba(147,51,234,0.18);
+}
+
+.mode-btn:hover { transform: translateY(-1px); filter: brightness(1.02); }
+.mode-btn:active { transform: translateY(0px) scale(0.99); }
+.mode-btn:focus-visible { outline: 3px solid rgba(59,130,246,0.35); outline-offset: 2px; }
+
+.chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(148,163,184,0.6);
+  background: rgba(255,255,255,0.85);
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 13px;
+  color: rgba(15,23,42,0.86);
+  transition: transform 120ms ease, background 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.chip:hover { background: rgba(241,245,249,0.95); transform: translateY(-1px); }
+.chip:active { transform: translateY(0px) scale(0.99); }
+.chip:focus-visible { outline: 3px solid rgba(59,130,246,0.35); outline-offset: 2px; }
+.chip.active {
+  border-color: rgba(59,130,246,0.8);
+  color: #1d4ed8;
+  box-shadow: 0 8px 18px rgba(59,130,246,0.14);
+  background: rgba(239,246,255,0.9);
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 999px;
+  background: rgba(241,245,249,0.8);
+  border: 1px solid rgba(148,163,184,0.35);
+  color: rgba(15,23,42,0.82);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.flashcard-container {
+  perspective: 1000px;
+  margin: 20px 0;
+}
+
+.flashcard {
+  width: 100%;
+  min-height: 300px;
+  position: relative;
+  touch-action: manipulation;
+  transform-style: preserve-3d;
+  transition: transform 0.6s;
+  cursor: pointer;
+}
+
+.flashcard.flipped {
+  transform: rotateY(180deg);
+}
+
+.flashcard-front,
+.flashcard-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.15);
+  border: 1px solid rgba(148,163,184,0.2);
+}
+
+.flashcard-front {
+  background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(147,51,234,0.1));
+}
+
+.flashcard-back {
+  background: linear-gradient(135deg, rgba(34,197,94,0.1), rgba(59,130,246,0.1));
+  transform: rotateY(180deg);
+}
+
+.card-content {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: #0f172a;
+}
+
+.card-hint {
+  margin-top: 16px;
+  font-size: 14px;
+  color: rgba(15,23,42,0.6);
+  font-weight: 400;
+}
+
+.speaker-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.speaker-btn {
+  padding: 10px 18px;
+  border-radius: 12px;
+  border: 1px solid rgba(59,130,246,0.4);
+  background: rgba(239,246,255,0.9);
+  color: #1d4ed8;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 120ms ease, background 120ms ease, box-shadow 120ms ease;
+}
+
+.speaker-btn:hover {
+  background: rgba(219,234,254,0.95);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(59,130,246,0.2);
+}
+
+.speaker-btn:active { transform: translateY(0) scale(0.98); }
+.speaker-btn:focus-visible { outline: 3px solid rgba(59,130,246,0.35); outline-offset: 2px; }
+
+.flashcard-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  justify-content: center;
+}
+
+.action-btn {
+  padding: 12px 24px;
+  border-radius: 14px;
+  border: none;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+  flex: 1;
+  max-width: 150px;
+}
+
+.action-btn:hover { transform: translateY(-2px); }
+.action-btn:active { transform: translateY(0px) scale(0.98); }
+
+.btn-known {
+  background: linear-gradient(180deg, rgba(34,197,94,0.95), rgba(22,163,74,0.98));
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(34,197,94,0.25);
+}
+
+.btn-unknown {
+  background: linear-gradient(180deg, rgba(239,68,68,0.95), rgba(220,38,38,0.98));
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(239,68,68,0.25);
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  justify-content: center;
+}
+
+.nav-btn {
+  padding: 10px 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(148,163,184,0.4);
+  background: rgba(255,255,255,0.9);
+  cursor: pointer;
+  font-weight: 600;
+  color: rgba(15,23,42,0.85);
+  transition: transform 120ms ease, background 120ms ease;
+}
+
+.nav-btn:hover {
+  background: rgba(241,245,249,0.95);
+  transform: translateY(-1px);
+}
+
+.nav-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.stats {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  padding: 8px 16px;
+  border-radius: 12px;
+  background: rgba(241,245,249,0.8);
+  border: 1px solid rgba(148,163,184,0.3);
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(15,23,42,0.8);
+}
+
+.result {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 800;
+  margin-top: 12px;
+}
+
+.result-actions {
+  margin-top: 16px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.ghost-btn {
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(148,163,184,0.55);
+  background: rgba(255,255,255,0.7);
+  cursor: pointer;
+  font-weight: 700;
+  color: rgba(15,23,42,0.85);
+  transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+}
+
+.ghost-btn:hover { background: rgba(241,245,249,0.9); transform: translateY(-1px); border-color: rgba(59,130,246,0.55); }
+.ghost-btn:active { transform: translateY(0px) scale(0.99); }
+.ghost-btn:focus-visible { outline: 3px solid rgba(59,130,246,0.35); outline-offset: 2px; }
+
+.rating-warning {
+  display: none;
+  background: linear-gradient(135deg, rgba(251,191,36,0.15), rgba(245,158,11,0.15));
+  border: 1px solid rgba(245,158,11,0.5);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-top: 16px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #92400e;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Tablet */
+@media (max-width: 768px) {
+  body { padding: 24px 16px; }
+  .quiz-box { padding: 24px; }
+  h1 { font-size: 24px; }
+  
+  .mode-btn {
+    padding: 18px 20px;
+    font-size: 18px;
+  }
+  
+  .chip {
+    padding: 14px 16px;
+    font-size: 15px;
+  }
+  
+  .action-btn {
+    padding: 16px 20px;
+    font-size: 17px;
+    min-height: 56px;
+  }
+  
+  .nav-btn {
+    padding: 14px 18px;
+    font-size: 15px;
+    min-height: 50px;
+  }
+  
+  .ghost-btn {
+    padding: 16px 20px;
+    font-size: 16px;
+    min-height: 52px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  body { padding: 12px 8px; }
+  .quiz-box { padding: 16px; border-radius: 18px; }
+  h1 { font-size: 22px; }
+  .subtitle { font-size: 13px; margin-bottom: 16px; }
+  
+  .section-title { font-size: 15px; }
+  
+  .mode-btn {
+    padding: 20px 16px;
+    font-size: 18px;
+    border-radius: 16px;
+    margin-top: 10px;
+  }
+  
+  .chip-group {
+    gap: 10px;
+  }
+  
+  .chip {
+    padding: 16px 18px;
+    font-size: 16px;
+    border-radius: 14px;
+    flex: 1;
+    min-width: calc(50% - 10px);
+    text-align: center;
+  }
+  
+  .meta { 
+    gap: 8px; 
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .pill { 
+    padding: 10px 12px; 
+    font-size: 13px;
+    flex: 1;
+    min-width: calc(33% - 8px);
+    text-align: center;
+    justify-content: center;
+  }
+  
+  .flashcard-container {
+    margin: 16px 0;
+  }
+  
+  .flashcard {
+    min-height: 260px;
+  }
+  
+  .flashcard-front, .flashcard-back { 
+    padding: 24px 16px;
+    border-radius: 16px;
+  }
+  
+  .card-content { font-size: 20px; }
+  .card-hint { font-size: 13px; margin-top: 12px; }
+  
+  .flashcard-actions {
+    gap: 10px;
+    margin-top: 20px;
+  }
+  
+  .action-btn {
+    padding: 18px 16px;
+    font-size: 16px;
+    border-radius: 14px;
+    min-height: 60px;
+    max-width: none;
+    flex: 1;
+  }
+  
+  .nav-buttons {
+    gap: 8px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  
+  .nav-btn {
+    padding: 16px 14px;
+    font-size: 15px;
+    border-radius: 12px;
+    min-height: 52px;
+    flex: 1;
+    min-width: calc(33% - 8px);
+  }
+  
+  .stats {
+    gap: 8px;
+    margin-top: 16px;
+  }
+  
+  .stat-item {
+    padding: 10px 12px;
+    font-size: 13px;
+    flex: 1;
+    text-align: center;
+  }
+  
+  .rating-warning {
+    padding: 14px 12px;
+    font-size: 14px;
+    margin-top: 14px;
+  }
+  
+  .result {
+    font-size: 18px;
+  }
+  
+  .result-actions {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .ghost-btn {
+    padding: 18px 20px;
+    font-size: 16px;
+    border-radius: 14px;
+    min-height: 56px;
+    flex: 1;
+    min-width: 140px;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 360px) {
+  body { padding: 8px 6px; }
+  .quiz-box { padding: 14px; border-radius: 16px; }
+  h1 { font-size: 20px; }
+  
+  .mode-btn {
+    padding: 18px 14px;
+    font-size: 16px;
+  }
+  
+  .chip {
+    padding: 14px 12px;
+    font-size: 15px;
+    min-width: calc(50% - 8px);
+  }
+  
+  .pill {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+  
+  .flashcard {
+    min-height: 220px;
+  }
+  
+  .card-content { font-size: 18px; }
+  
+  .action-btn {
+    padding: 16px 12px;
+    font-size: 15px;
+    min-height: 54px;
+  }
+  
+  .nav-btn {
+    padding: 14px 10px;
+    font-size: 14px;
+    min-height: 48px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="quiz-box">
+  <h1>TOEIC Vocabulary Flashcard</h1>
+  <p class="subtitle">Lật thẻ để xem nghĩa, đánh giá mức độ nhớ từ vựng của bạn</p>
+
+  <div id="start" class="start-panel">
+    <div class="section-title">Chọn chế độ</div>
+    <button class="mode-btn" onclick="startFlashcard(1)">English → Vietnamese</button>
+    <button class="mode-btn" onclick="startFlashcard(2)">Vietnamese → English</button>
+
+    <div class="section-title" style="margin-top:12px;">Chọn số lượng thẻ</div>
+    <div class="chip-group" id="difficultyGroup">
+      <button class="chip active" onclick="setCardCount(this, 20)">20 thẻ</button>
+      <button class="chip" onclick="setCardCount(this, 50)">50 thẻ</button>
+      <button class="chip" onclick="setCardCount(this, 100)">100 thẻ</button>
+      <button class="chip" onclick="setCardCount(this, -1)">Tất cả</button>
+    </div>
+  </div>
+
+  <div id="flashcard" style="display:none;">
+    <div class="meta">
+      <div class="pill" id="counter">Thẻ 1/20</div>
+      <div class="pill" id="knownCount">✅ Đã biết: 0</div>
+      <div class="pill" id="unknownCount">❌ Chưa biết: 0</div>
+    </div>
+
+    <div class="flashcard-container">
+      <div class="flashcard" id="card" onclick="flipCard()">
+        <div class="flashcard-front">
+          <div>
+            <div class="card-content" id="frontText"></div>
+            <div class="card-hint">Click để lật thẻ</div>
+          </div>
+        </div>
+        <div class="flashcard-back">
+          <div>
+            <div class="card-content" id="backText"></div>
+            <div class="card-hint">Click để lật lại</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="speaker-row">
+      <button type="button" class="speaker-btn" id="speakerBtn" onclick="playPronunciation()" title="Nghe phát âm tiếng Anh">🔊 Nghe phát âm</button>
+    </div>
+
+    <div class="flashcard-actions">
+      <button class="action-btn btn-known" onclick="markKnown()">✅ Đã biết</button>
+      <button class="action-btn btn-unknown" onclick="markUnknown()">❌ Chưa biết</button>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="nav-btn" id="prevBtn" onclick="prevCard()">← Trước</button>
+      <button class="nav-btn" onclick="shuffleCards()">🔀 Xáo trộn</button>
+      <button class="nav-btn" id="nextBtn" onclick="goToNextCard()">Tiếp →</button>
+    </div>
+
+    <div class="rating-warning" id="ratingWarning">
+      ⚠️ Vui lòng bấm "Đã biết" hoặc "Chưa biết" để qua thẻ tiếp theo!
+    </div>
+
+    <div class="stats">
+      <div class="stat-item">Tổng: <span id="totalCards">0</span></div>
+      <div class="stat-item">Đã xem: <span id="viewedCards">0</span></div>
+      <div class="stat-item">Tỷ lệ: <span id="accuracy">0%</span></div>
+    </div>
+  </div>
+
+  <div class="result" id="result"></div>
+  <div class="result-actions" id="resultActions" style="display:none;">
+    <button class="ghost-btn" id="continueBtn" onclick="continueFlashcards()" style="display:none;">Tiếp tục học</button>
+    <button class="ghost-btn" id="restartBtn" onclick="resetToHome()" style="display:none;">Chơi lại</button>
+  </div>
+</div>
+
+<script>
+const vocab = [
+  // MINITEST
+  {en:"Office supplies", vi:"văn phòng phẩm"},
+  {en:"Trouble", vi:"trục trặc, sự cố"},
+  {en:"Internet connection", vi:"kết nối internet"},
+  {en:"Project proposal", vi:"bản đề xuất dự án"},
+  {en:"Lobby", vi:"sảnh"},
+  {en:"(Be) supposed to", vi:"được cho là"},
+  {en:"Flight", vi:"chuyến bay"},
+  {en:"Expense report", vi:"báo cáo chi phí"},
+  {en:"Organize", vi:"tổ chức"},
+  {en:"Interview", vi:"phỏng vấn"},
+  {en:"Exhibit", vi:"triển lãm"},
+  {en:"Artist", vi:"nghệ sĩ"},
+  {en:"Retirement party", vi:"tiệc nghỉ hưu"},
+  {en:"Budget", vi:"ngân sách"},
+  {en:"Assistant director", vi:"trợ lý giám đốc"},
+  {en:"Advertise", vi:"quảng cáo"},
+  {en:"Painting", vi:"tranh vẽ"},
+  {en:"Shopping cart", vi:"xe đẩy trong siêu thị"},
+  {en:"occupied = full", vi:"đầy, bị chiếm (ai đã ngồi vào/ có đồ đạc để vào)"},
+  {en:"substantial/ large amount of", vi:"MỘT  lượng lớn"},
+  {en:"escalator", vi:" thang CUỐN"},
+  {en:"controversial", vi:"gây tranh cãi"},
+  {en:"recent ", vi:"gần đây"},
+  {en:"procurement officer", vi:"nhân viên mua hàng"},
+  {en:"bidding", vi:"đấu thầu"},
+  {en:"policy and procedures", vi:"chính sách và quy ĐỊNH"},
+  {en:"business administration", vi:"quản trị kinh doanh"},
+  {en:"applicant vs. application", vi:"người nộp đơn vs. đơn xin việc"},
+  {en:"corporate environment", vi:"môi trường doanh nghiệp"},
+  {en:"internship - intern", vi:"thực tập - thực tập sinh"},
+  {en:"largely consist of", vi:"phần lớn bao gồm"},
+  {en:"Itinerary", vi:"lịch  trình"},
+  {en:"belongings", vi:"đồ đạc cá nhân, tư trang "},
+  {en:"packaged food", vi:"thực phẩm đóng gói sẵn"},
+  {en:"objection", vi:"sự phản đối"},
+  {en:"inn", vi:"nhà trọ"},
+  {en:"fragrance", vi:"nước hoa "},
+  {en:"tie the shoelace", vi:"thắt dây giày"},
+  {en:"apron", vi:"tạp dề"},
+  {en:"jar", vi:"cái lọ"},
+  {en:"be equipped with", vi:"được trang bị với"},
+  {en:"flight attendant", vi:"tiếp viên hàng không"},
+  {en:"offer a recommendation ", vi:"đưa ra đề xuất"},
+  {en:"manage ST effectively", vi:"quản lý hiệu quả"},
+  {en:"optimistic vs. pessimistic", vi:"lạc quan vs. bi quan"},
+  {en:"predict ", vi:"dự đoán "},
+  {en:"impact work schedules vs. affect work schedules", vi:"ảnh hưởng đến lịch làm việc"},
+
+  // UNIT 7
+  {en:"Be in a meeting", vi:"đang họp"},
+  {en:"On sick leave", vi:"nghỉ ốm"},
+  {en:"Get promoted", vi:"được thăng chức"},
+  {en:"Sales figures", vi:"doanh số"},
+  {en:"Hand in", vi:"nộp= submit"},
+  {en:"An increase in sales", vi:"tăng doanh số"},
+  {en:"A decrease in sales", vi:"giảm doanh số"},
+  {en:"Promotional campaign", vi:"chiến dịch quảng bá"},
+  {en:"Last quarter", vi:"quý trước"},
+  {en:"Out of order", vi:"hỏng"},
+  {en:"Sales report", vi:"báo cáo bán hàng"},
+  {en:"Audit report", vi:"báo cáo kiểm toán"},
+  {en:"Take place", vi:"diễn ra"},
+  {en:"Be scheduled to", vi:"được lên lịch"},
+  {en:"Farewell party", vi:"tiệc chia tay"},
+  {en:"Training session", vi:"buổi đào tạo"},
+  {en:"Keynote speaker", vi:"diễn giả chính"},
+  {en:"Give a presentation", vi:"thuyết trình"},
+  {en:"Give an award", vi:"trao giải"},
+  {en:"Make it to", vi:"đến kịp= arrive on time"},
+  {en:"Trainer", vi:"người huấn luyện"},
+  {en:"Trainee", vi:"người được đào tạo"},
+  {en:"Organizer", vi:"người tổ chức"},
+  {en:"Participant", vi:"người tham gia"},
+  {en:"hand it ", vi:" trả lại = returning it"},
+  
+  // UNIT 8
+  {en:"Have something delivered", vi:"Nhờ đưa cái gì đến"},
+  {en:"delivery", vi:"giao hàng= shipment= distribution= dispatch"},
+  {en:"Place a delivery", vi:"đặt giao hàng"},
+  {en:"distribution", vi:"sự phân phối= giao hàng= delivery= dispatch"},
+  {en:"dispatch", vi:"gửi đi,phân phối= giao hàng= delivery= distribution"},
+  {en:"Place an order", vi:"đặt hàng"},
+  {en:"Out of stock", vi:"hết hàng"},
+  {en:"In stock", vi:"còn hàng"},
+  {en:"Newly released", vi:"mới ra mắt"},
+  {en:"Make a payment", vi:"thanh toán"},
+  {en:"On sale", vi:"đang giảm giá"},
+  {en:"Pay a bill", vi:"trả hóa đơn"},
+  {en:"Get a refund", vi:"hoàn tiền"},
+  {en:"Get a discount", vi:"được giảm giá"},
+  {en:"Exchange", vi:"đổi hàng"},
+  {en:"Promotional coupon", vi:"phiếu giảm giá"},
+  {en:"New arrivals", vi:"hàng mới về"},
+  {en:"Have a meal", vi:"dùng bữa"},
+  {en:"Book a table", vi:"đặt bàn"},
+  {en:"Main course", vi:"món chính"},
+  {en:"Appetizer", vi:"món khai vị"},
+  {en:"Dine", vi:"dùng bữa"},
+  {en:"Dine-in", vi:"ăn tại chỗ"},
+  {en:"Diner", vi:"người dùng bữa"},
+  {en:"refreshment", vi:"đồ ăn nhẹ"},
+  {en:"Make a reservation", vi:"đặt chỗ"},
+  {en:"Beverage", vi:"đồ uống"},
+  {en:"be available", vi:"rảnh= free"},
+  {en:"reach me", vi:"liên lạc với tôi= contact me"},
+  {en:"Be advised to contact ", vi:"được khuyên  liên lạc với "},
+  {en:"welcome aboard", vi:"chào mừng lên máy bay"},
+  {en:"inclement weather", vi:"thời tiết khắc nghiệt"},
+  {en:"Make sure to check", vi:"hãy chắc chắn kiểm tra"},
+  {en:"mechanical problem", vi:"vấn đề máy móc"},
+  {en:"tour guide", vi:"hướng dẫn viên du lịch"},
+  {en:"Tourist", vi:"khách du lịch=visitor=traveler"},
+  {en:"traveler", vi:"người đi du lịch= tourist= visitor"},
+  {en:"visitor", vi:"khách tham quan= tourist= traveler"},
+  {en:"Please note that~", vi:"xin lưu ý rằng~"},
+  {en:"assistant coordinator", vi:"Trợ lý điều phối"},
+  // UNIT 9
+  {en:"Have a reservation", vi:"có đặt trước"},
+  {en:"Under the name of", vi:"dưới tên"},
+  {en:"Within walking distance", vi:"trong khoảng đi bộ"},
+  {en:"Book a room", vi:"đặt phòng"},
+  {en:"Cancellation", vi:"hủy"},
+  {en:"Accommodation", vi:"chỗ ở"},
+  {en:"Minibar", vi:"tủ lạnh mini"},
+  {en:"Passport", vi:"hộ chiếu"},
+  {en:"Check in bags", vi:"ký gửi hành lý"},
+  {en:"Metal detector", vi:"máy dò kim loại"},
+  {en:"Final destination", vi:"điểm đến cuối"},
+  {en:"Pick up luggage", vi:"lấy hành lý"},
+  {en:"Baggage claim", vi:"khu nhận hành lý"},
+  {en:"Immigration", vi:"nhập cảnh"},
+  {en:"Boarding pass", vi:"thẻ lên máy bay"},
+  {en:"Connecting flight", vi:"chuyến bay nối chuyến"},
+  {en:"demand", vi:"nhu cầu "},
+  {en:"curial", vi:"quan trọng= important"},
+  {en:"important", vi:"quan trọng= curial"},
+  {en:"on the shelf", vi:"trên kệ"},
+  {en:"athletes", vi:"vận động viên"},
+   {en:"Catering company", vi:"Công ty cung cấp dịch vụ ăn uống"},
+  {en:"Repair cost", vi:"Chi phí sửa chữa"},
+  {en:"Check-up", vi:"Kiểm tra sức khỏe"},
+  {en:"Reusable", vi:"Tái sử dụng"},
+  {en:"Furniture store", vi:"Cửa hàng nội thất"},
+  {en:"Power button", vi:"Nút nguồn"},
+  {en:"Fitness tracker", vi:"Máy theo dõi sức khỏe"},
+  {en:"Lease agreement", vi:"Hợp đồng"},
+  {en:"Heating system", vi:"Hệ thống sưởi"},
+  {en:"Safety inspection", vi:"Kiểm tra an toàn"},
+  {en:"Harvest", vi:"Thu hoạch"},
+  {en:"Cabinet", vi:"Tủ đựng đồ"},
+  {en:"Postpone", vi:"Hoãn"},
+  {en:"Production figures", vi:"Số liệu sản xuất"},
+  {en:"Therapist", vi:"Nhà trị liệu"},
+
+  {en:"Grant", vi:"Trợ cấp"},
+  {en:"Manual", vi:"Sách hướng dẫn"},
+  {en:"Feature", vi:"Đặc điểm"},
+  {en:"Primary", vi:"Chính, chủ yếu"},
+  {en:"Wireless", vi:"Không dây"},
+  {en:"Obstacle", vi:"Chướng ngại vật"},
+  {en:"Distinctive", vi:"Khác biệt"},
+  {en:"Statistics", vi:"Số liệu"},
+  {en:"Sector", vi:"Lĩnh vực"},
+  {en:"Release", vi:"Tung ra, phát hành"},
+  {en:"Secure", vi:"An toàn"},
+  {en:"Technological advancement", vi:"Sự tiến bộ về công nghệ"},
+  {en:"Assist", vi:"Hỗ trợ"},
+  {en:"Power outage", vi:"Mất điện"},
+  {en:"Generator", vi:"Máy phát điện"},
+  {en:"Fingerprint", vi:"Vân tay"},
+  {en:"Application", vi:"Đơn xin việc"},
+  {en:"Manufacturing plant", vi:"Nhà máy sản xuất"},
+  {en:"Customize", vi:"Tùy chỉnh"},
+  {en:"Reassure", vi:"Trấn an"},
+  {en:"Overseas", vi:"Nước ngoài, hải ngoại"},
+  {en:"Power lines", vi:"Đường dây điện"},
+  {en:"Negotiation", vi:"Cuộc đàm phán"},
+  {en:"Agricultural innovations", vi:"Đổi mới về nông nghiệp"},
+  {en:"Environmentally friendly", vi:"Thân thiện với môi trường"},
+  {en:"Charge fee", vi:"Tính phí"},
+  {en:"Grant", vi:"Tài trợ"},
+  {en:"Market share", vi:"Thị phần"},
+  {en:"Solve the problem", vi:"Giải quyết vấn đề"},
+  {en:"Professor", vi:"Giáo sư"},
+  {en:"Seminar / workshop", vi:"Hội thảo"},
+  {en:"Gorgeous", vi:"Lộng lẫy"},
+  {en:"Be sold out", vi:"Bán hết"},
+  {en:"Merchandise", vi:"Hàng hóa"},
+  {en:"Exchange", vi:"Trao đổi"},
+  {en:"Accessible", vi:"Có thể tiếp cận được"},
+  {en:"Satisfied with", vi:"Hài lòng với"},
+  {en:"Consistent with", vi:"Nhất quán"},
+  {en:"Executive", vi:"Người quản lý cấp cao có thể hiểu là CEO"},
+  {en:"manual", vi:"sách hướng dẫn= brochure = booklet"},
+  {en:"brochure", vi:"sách hướng dẫn= manual = booklet"},
+  {en:"booklet", vi:"sách hướng dẫn= manual = brochure"},
+  {en:"pothole", vi:"ổ gà "},
+  {en:"quote", vi:"báo giá"},
+  {en:"dozen eggs", vi:"nửa 1 tá trứng"},
+  {en:"polish", vi:"đánh bóng, lau chùi"}, 
+  {en:"table ware", vi:"bộ đồ ăn"},
+  {en:"dishes", vi:"đĩa, bát đĩa= plate"},
+  {en:"plate", vi:"đĩa, bát đĩa= dishes"},
+  {en:"wheelbarrow", vi:"xe rùa"},
+  {en:"monitor", vi:"màn hình máy tính"},
+  {en:"porder", vi:" người khuân vác"},
+  {en:"laid out", vi:"đặt ra,bày ra"},
+  {en:"statue", vi:"tượng"},
+  {en:"wheeling carts", vi:"xe đẩy hàng = shopping carts"},
+  {en:"wagon", vi:"toa chở hàng"},
+
+  // Extra
+  {en:"training session", vi:"buổi đào tạo"},
+  {en:"sick leave", vi:"nghỉ ốm"},
+  {en:"find out", vi:"tìm ra"},
+  {en:"experiment", vi:"thí nghiệm"},
+  {en:"hire", vi:"tuyển dụng"},
+  {en:"client", vi:"khách hàng"},
+  {en:"director", vi:"giám đốc"},
+  {en:"conference", vi:"hội nghị"},
+  {en:"launch", vi:"ra mắt"},
+  {en:"advertise", vi:"quảng cáo= promote product"},
+  {en:"promote product", vi:"quảng cáo= advertise"},
+  {en:"marketing strategy", vi:"chiến lược marketing"},
+  {en:"cash refund offer", vi:"đề nghị hoàn tiền mặt=credit refund offer"},
+  {en:"credit refund offer", vi:"đề nghị hoàn tiền vào thẻ tín dụng= cash refund offer"},
+  {en:"retailer", vi:"người bán lẻ"},
+  {en:"wholesaler", vi:"người bán sỉ"},
+  {en:"Appeal to", vi:"thu hút= attract"},
+  {en:"attract", vi:"thu hút= Appeal to"},
+  {en:"attractive", vi:"hấp dẫn= appealing"},
+  {en:"appealing", vi:"hấp dẫn= attractive"},
+  {en:"advertising agency", vi:"công ty quảng cáo"},
+  {en:"chain store", vi:" chuỗi cửa hàng"},
+  {en:"Suffering", vi:" trải qua "},
+  {en:"undergo", vi:"trải qua= suffer"},
+  {en:"backaches", vi:"đau lưng"},
+  {en:"Satisfaction", vi:" hài lòng"},
+  {en:"Senior citizen", vi:"dân cư có tuổi "},
+  {en:"to go over", vi:"kiểm tra"},
+  {en:"brief case", vi:"bộ hồ sơ"},
+  {en:"Audit", vi:"kiểm toán"},
+  {en:"Annual audit", vi:"kiểm toán hàng năm"},
+  {en:"yearly", vi:"hàng năm= annual"},
+  {en:"monthly", vi:"hàng tháng"},
+  {en:"quarterly", vi:"hàng quý"},
+  {en:"daily", vi:"hàng ngày"},
+  {en:"weekly", vi:"hàng tuần"},
+  {en:"receptionist", vi:"lễ tân"},
+  {en:"supervisor", vi:"giám sát"},
+  {en:"Accountant", vi:"kế toán"},
+  {en:"secretary", vi:"thư ký"},
+  {en:"vice president", vi:"phó tổng giám đốc"},
+  {en:"human resources department", vi:"Phòng nhân sự"},
+  {en:"personnel department", vi:"phòng nhân sự"},
+  {en:"path", vi:"đường mòn"},
+  {en:"Grass", vi:"cỏ"},
+  {en:"cooking pots", vi:"nồi nấu ăn"},
+  {en:"furniture", vi:"nội thất"},
+  {en:"office facilities", vi:"cơ sở văn phòng"},
+  {en:"curtain", vi:"rèm"},
+  {en:"lamp", vi:"đèn để bàn"},
+  {en:"light", vi:"đèn"},
+  {en:"ceiling", vi:"trần nhà"},
+  {en:"projector", vi:"máy chiếu"},
+  {en:"railway", vi:"đường sắt"},
+  {en:"bus stop", vi:"trạm dừng xe buýt"},
+  {en:"toll gate", vi:"trạm thu phí"},
+  {en:"highway", vi:"đường cao tốc"},
+  {en:"expressway", vi:"đường cao tốc"},
+  {en:"roundabout", vi:"Bùng binh vòng xoay"},
+  {en:"overpass", vi:"cầu vượt"},
+  {en:"road sign", vi:"biển báo giao thông"},
+  {en:"traffic light", vi:"đèn giao thông"},
+  {en:"pavement", vi:"làn đường,vỉa hè"},
+  {en:"sidewalk", vi:"vỉa hè"},
+  {en:"Trim the lawn", vi:"cắt cỏ"},
+  {en:"Mow the lawn", vi:"cắt cỏ"},
+  {en:"pedestrian", vi:"người đi bộ"},
+  {en:"crosswalk", vi:"đường đi bộ"},
+  {en:"crossing lines", vi:"đường đi bộ"},
+  {en:"zebra crossing", vi:"đường đi bộ"},
+  {en:"sweep the floor", vi:"quét sàn nhà"},
+  {en:"bushes", vi:"cây bụi"},
+  {en:"flower beds", vi:"bồn hoa"},
+  {en:"weed", vi:"cỏ dại"},
+  {en:"weed the flower beds", vi:"dọn cỏ trong bồn hoa"},
+  {en:"treadmill", vi:"máy chạy bộ"},
+  {en:"pile", vi:"chất chồng"},
+  {en:"parasol", vi:"cái dù"},
+  {en:"stock shelf", vi:"chất hàng lên kệ"},
+  {en:"be occupied", vi:"bị chiếm giữ,đầy"},
+  {en:"tow away", vi:"kéo đi"},
+  {en:"take down", vi:"gỡ xuống"},
+  {en:"parking (lot)", vi:"bãi đỗ xe"},
+  {en:"parke on the slide", vi:"đỗ xe trên dốc"},
+  {en:"waitrees", vi:"nữ phục vụ"},
+  {en:"up side down", vi:"lộn ngược"},
+  {en:"intersection", vi:"giao lộ"},
+  {en:"T-junction", vi:"ngã ba"},
+  {en:"platform", vi:"sân ga lớn hơn station"},
+  {en:"sack hand", vi:"bắt tay"},
+  {en:"bulletin board", vi:"bảng thông báo trên công ty"},
+  {en:"stair way", vi:"cầu thang bộ"},
+  {en:"construction work", vi:"công trình xây dựng"},
+  {en:"the city council", vi:"hội đồng thành phố"},
+  {en:"demolished", vi:"bị phá hủy=destroyed"},
+  {en:"stay ín shaped", vi:"giữ dáng"},
+  {en:"officer worker", vi:"nhân viên văn phòng"},
+  {en:"lobby", vi:"sảnh lớn"},
+  {en:"placed", vi:"đặt tại"},
+  {en:"veding machine", vi:"máy bán hàng tự động"},
+  {en:"review", vi:"ôn tập"},
+  {en:"examine", vi:"ôn tap kỹ lưỡng"},
+  {en:"stare at", vi:"nhìn chằm chằm"},
+  {en:"arrange", vi:"sắp xếp"},
+  {en:"type", vi:"đánh máy"},
+  {en:"chop up ", vi:"chặt nhỏ"},
+  {en:"point at", vi:"chỉ vào"},
+  {en:"pull", vi:"kéo"},
+  {en:"push", vi:"đẩy"},
+  {en:"wave", vi:"vẫy tay"},
+  {en:"gesture", vi:"cử chỉ tay "},
+  {en:"walk", vi:"đi bộ"},
+  {en:"hike", vi:"đi bộ đường dài"},
+  {en:"ride", vi:"cưỡi,đi xe"},
+  {en:"board", vi:"lên (xe, tàu, máy bay)"},
+  {en:"lie down", vi:"nằm xuống"},
+  {en:"lean against", vi:"dựa vào"},
+  {en:"lean on", vi:"dựa vào"},
+  {en:"sleeves", vi:"ống tay áo"},
+  {en:"rolling up", vi:"xắn lên"},
+  {en:"starter", vi:"món khai vị"},
+  {en:"dessert", vi:"món tráng miệng"},
+  {en:"allergic to", vi:"dị ứng"},
+  {en:"allergy", vi:"dị ứng"},
+  {en:"herb sauce", vi:"nước sốt thảo mộc"},
+  {en:"dine-in", vi:"ăn tại chỗ"},
+  {en:"take a way", vi:"mang đi"},
+  {en:"spacious", vi:"rong rãi"},
+  {en:"fish tank", vi:"bể cá"},
+  {en:"art gallery", vi:"triển lãm nghệ thuật"},
+  {en:"exhibition", vi:"triển lãm"}, 
+  {en:"regular", vi:"thường xuyên"},
+  {en:"back up", vi:"sao lưu dữ liệu"},
+  {en:"injury", vi:"chấn thương,vết thương"}, 
+  {en:"further", vi:"hơn nữa, thêm"},
+  {en:"efficiency", vi:"hiệu suất"},
+  {en:"specializes", vi:"chuyên môn về gì đó"},
+  {en:"reached an agreement", vi:"đạt được thỏa thuận"},
+  {en:"importing", vi:"nhập khẩu"},
+  {en:"exporting", vi:"xuất khẩu"},
+  {en:"exceptionally talented", vi:"cực kỳ tài năng"},
+  {en:"architect", vi:"kiến trúc sư"},
+  {en:"political issue", vi:"vấn đề chính trị"},
+  {en:"throughout the country", vi:"khắp  cả nước"},
+  {en:"chief financial officer", vi:"giám đốc tài chính"},
+  {en:"inspect", vi:"kiểm tra=check"},
+  {en:"appropriate", vi:"phù hợp = với  suitable (for) =với compatible (with)"},
+  {en:"suitable ", vi:"phù hợp = với appropriate (for) =với compatible (with)"},
+  {en:"compatible", vi:"phù hợp = với appropriate (for) =với suitable (for)"},
+  {en:"career", vi:" sự nghiệp"},
+  {en:"regarding", vi:"liên quan đến= about"},
+  {en:"thoroughly", vi:"một cách kỹ lưỡng= carefully"},
+  {en:"short of money", vi:"thiếu tiền"},
+  {en:"enclosed", vi:"đính kèm= attached= included"},
+  {en:"attached", vi:"đính kèm= enclosed= included"},
+  {en:"included", vi:"đính kèm= enclosed= attached"},
+  {en:"cafeteria", vi:"căn tin"},
+  {en:"employee valuation", vi:"đánh giá nhân viên"},
+  {en:"parking spot", vi:"chỗ đậu xe= parking space= parking lot"},
+  {en:"parking space", vi:"chỗ đậu xe= parking spot= parking lot"},
+  {en:"parking lot", vi:"chỗ đậu xe= parking spot= parking space"},
+  {en:"indeed", vi:"thực ra= in fact= actually"},
+  {en:"the expansion", vi:"sự mở rộng="},
+  {en:"converting", vi:"chuyển đổi"},
+  {en:"policy", vi:"chính sách"},
+  {en:"bankrupt", vi:"bị phá sản"},
+  {en:"in charge of", vi:"trách nhiệm của"},
+  {en:"commercial", vi:"quảng cáo= advertisement"},
+  {en:"advertisement", vi:"quảng cáo= commercial"},
+  {en:"work ethics", vi:"đạo đức nghề nghiệp"},
+  {en:"exceeded expectations.", vi:"vượt quá mong đợi."},
+  {en:"upcoming", vi:"sắp tới"},
+  {en:"lounge", vi:"phòng chờ= waiting area"},
+  {en:"waiting area", vi:"phòng chờ= lounge"},
+  {en:"overweight", vi:"quá tải"},
+  {en:"bus fare", vi:"vé xe buýt= bus ticket=  transportation pass"},
+  {en:"transportation pass", vi:"vé xe buýt= bus fare= bus ticket"},
+  {en:"port", vi:"cảng= harborview"},
+  {en:"harborview", vi:"cảng= port"},
+  {en:"annual", vi:"hàng năm= yearly"},
+  {en:"hang up a shirt", vi:"treo áo"},
+  {en:"hammer a mail", vi:"đóng đinh một cái bảng"},
+  {en:"rug", vi:"thảm= carpet= mat"},
+  {en:"carpet", vi:"thảm= rug= mat"},
+  {en:"mat", vi:"thảm= carpet= rug"},
+  {en:"plank", vi:"ván gỗ"},
+  {en:"stack", vi:"tầng, chồng chất= pile"},
+  {en:"speech therapist", vi:"nhà trị liệu ngôn ngữ"},
+  {en:"city hall", vi:"tòa thị chính"},
+  {en:"fingerprint identification scan", vi:"quét vân tay"},
+  {en:"agriculture", vi:" ngành nông nghiệp"},
+  {en:"manufacturing", vi:" nhà máy sản xuất"},
+  {en:"remains robust", vi:"vẫn còn vững chắc"},
+  {en:"statistics", vi:"thống kê"},
+  {en:"salary", vi:"lương= earnings= pay"},
+  {en:"earnings", vi:"lương= salary= pay"},
+  {en:"break room", vi:"phòng nghỉ"},
+  {en:"oversaw", vi:"giám sát"},
+  {en:"building by the river", vi:"tòa nhà bên bờ sông"},
+  {en:"stages", vi:"giai đoạn đi với giới từ (IN)"},
+  {en:"within walking distance", vi:"trong tầm đi bộ= gần"},
+  {en:"oven", vi:"lò nướng"},
+  {en:"indicated", vi:"chỉ ra= showed= pointed out"},
+  {en:"showed", vi:"chỉ ra= indicated= pointed out"},
+  {en:"pointed out", vi:"chỉ ra= indicated= showed"},
+  {en:"associates", vi:"cộng sự, đồng nghiệp= colleagues= partners= coworkers"},
+  {en:"colleagues", vi:"cộng sự, đồng nghiệp= associates= partners= coworkers"},
+  {en:"partners", vi:"cộng sự, đồng nghiệp= associates= colleagues= coworkers"},
+  {en:"coworkers", vi:"cộng sự, đồng nghiệp= associates= partners= colleagues"},
+  {en:"plumber", vi:"thợ sửa ống nước , anh thợ sửa máy mắn"},
+  {en:"residence", vi:"khu dân cư tòa cao ốc"},
+  {en:"cancel the appointment", vi:"hủy cuộc hẹn"},
+  {en:"initiative", vi:"sáng kiến"},
+  {en:"seek", vi:"tìm kiếm= look for= search for=find"},
+  {en:"look for", vi:"tìm kiếm= seek= search for=find"},
+  {en:"social media", vi:"truyền thông đa phương tiện"},
+  {en:"detailed", vi:"chi tiết"},
+  {en:"additionally", vi:"ngoài ra"},
+  {en:"promotional coupon", vi:"phiếu khuyến mãi= voucher= discount coupon= gift certificate"},
+  {en:"voucher", vi:"phiếu khuyến mãi= promotional coupon= discount coupon= gift certificate"},
+  {en:"discount coupon", vi:"phiếu khuyến mãi= promotional coupon= voucher= gift certificate"},
+  {en:"gift certificate", vi:"phiếu khuyến mãi= promotional coupon= voucher= discount coupon"},
+  {en:"printer cartridges", vi:"mực in"},
+  {en:"replacement", vi:"sự thay thế,nguoi thay thế"},
+  {en:"successor", vi:"người kế nhiệm"},
+  {en:"demonstration", vi:"sự trưng bày, sự biểu diễn"},
+  {en:"distribute leaflet", vi:"phát tờ rơi"},
+  {en:"role", vi:"nhân vật, vai trò= character= role"},
+  {en:"character", vi:"nhân vật, vai trò= role= character"},
+  {en:"banking session", vi:" thời lượng truy cập"},
+  {en:"complimenttary", vi:" miễn phí= free"},
+  {en:"involved in", vi:"liên quan ,tham gia vào việc gì đó. "},
+  {en:"limited edition", vi:"phiên bản giới hạn"},
+  {en:"in light of", vi:"dựa trên= considering= due to= because of"},
+  {en:"boiled", vi:"luộc"},
+  {en:"steamed", vi:"hấp"},
+  {en:"grilled", vi:"nướng"},
+  {en:"fried", vi:"rán, chiên"},
+  {en:"side dish", vi:"món ăn phụ, món ăn kèm"},
+  {en:"attire", vi:"trang phục  quần áo =clothes= outfit"},
+  {en:"clothes", vi:"trang phục  quần áo =attire= outfit"},
+  {en:"outfit", vi:"trang phục  quần áo =attire = clothes"},
+  {en:"burden", vi:"gánh nặng, trách nhiệm"},
+  { en: "estimate (report)", vi: "bảng ước tính" },
+  { en: "roof (n)", vi: "mái nhà" },
+  { en: "real estate agent", vi: "công ty môi giới bất động sản" },
+  { en: "property (n) ~ building", vi: "tài sản ~ tòa nhà" },
+  { en: "degrade – degradation (v-n)", vi: "tình trạng xuống cấp" },
+  { en: "official – city council (n)", vi: "quan chức, hội đồng thành phố" },
+  { en: "energy efficiency", vi: "hiệu suất năng lượng" },
+  { en: "power failure / cut / outage", vi: "cúp điện" },
+  { en: "interrupt – interruption (v-n)", vi: "gián đoạn" },
+  { en: "apartment complex", vi: "(khu phức hợp) chung cư" },
+  { en: "senior (adj)", vi: "có thâm niên" },
+  { en: "use / utilize (v)", vi: "sử dụng, tận dụng" },
+  { en: "representative (n)", vi: "người đại diện" },
+  { en: "summarize (v)", vi: "tóm tắt" },
+  { en: "record / paperwork / document", vi: "tài liệu" },
+  { en: "assembly line", vi: "dây chuyền lắp ráp" },
+  { en: "diligently", vi: "chăm chỉ= hard working" },
+  { en: "hard working", vi: "làm việc chăm chỉ= diligently" },
+  { en: "now that ", vi: "bởi vì = because" },
+];
+
+let mode, currentIndex = 0;
+let cardCount = 20;
+let currentCards = [];
+let knownCount = 0;
+let unknownCount = 0;
+let viewedCards = new Set();
+let ratedCards = new Set(); // Theo dõi các thẻ đã được đánh giá
+let milestoneShown = 0;
+
+function setCardCount(el, count) {
+  cardCount = count;
+  document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
+  el.classList.add("active");
+}
+
+function startFlashcard(m) {
+  mode = m;
+  currentIndex = 0;
+  knownCount = 0;
+  unknownCount = 0;
+  viewedCards.clear();
+  ratedCards.clear(); // Reset danh sách thẻ đã đánh giá
+  milestoneShown = 0;
+
+  // Tạo danh sách thẻ
+  let availableCards = [...vocab];
+  if (cardCount === -1) {
+    currentCards = shuffle([...availableCards]);
+  } else {
+    currentCards = shuffle([...availableCards]).slice(0, Math.min(cardCount, availableCards.length));
+  }
+
+  document.getElementById("start").style.display = "none";
+  document.getElementById("flashcard").style.display = "block";
+  document.getElementById("result").innerHTML = "";
+  document.getElementById("resultActions").style.display = "none";
+  document.getElementById("continueBtn").style.display = "none";
+  document.getElementById("restartBtn").style.display = "none";
+
+  showCard();
+}
+
+function resetToHome() {
+  document.getElementById("flashcard").style.display = "none";
+  document.getElementById("start").style.display = "block";
+  document.getElementById("result").innerHTML = "";
+  document.getElementById("resultActions").style.display = "none";
+  document.getElementById("continueBtn").style.display = "none";
+  document.getElementById("restartBtn").style.display = "none";
+}
+
+function showCard() {
+  if (currentCards.length === 0) {
+    showResult();
+    return;
+  }
+
+  const card = currentCards[currentIndex];
+  const cardElement = document.getElementById("card");
+  cardElement.classList.remove("flipped");
+
+  if (mode === 1) {
+    document.getElementById("frontText").innerText = card.en;
+    document.getElementById("backText").innerText = card.vi;
+  } else {
+    document.getElementById("frontText").innerText = card.vi;
+    document.getElementById("backText").innerText = card.en;
+  }
+
+  updateStats();
+  updateNavButtons();
+}
+
+function playPronunciation() {
+  if (!currentCards.length || currentIndex >= currentCards.length) return;
+  const card = currentCards[currentIndex];
+  const textToSpeak = card.en;
+  if (!textToSpeak) return;
+
+  var canSpeak = typeof window.speechSynthesis !== "undefined"
+    && typeof window.speechSynthesis.speak === "function";
+  if (canSpeak) {
+    try {
+      window.speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(textToSpeak);
+      u.lang = "en-US";
+      u.rate = 0.92;
+      window.speechSynthesis.speak(u);
+    } catch (e) {
+      canSpeak = false;
+    }
+  }
+  if (!canSpeak) {
+    alert("Zalo / trình duyệt trong app không hỗ trợ phát âm.\n\nĐể nghe đầy đủ: hãy copy link trang này và dán lên Chrome hoặc Edge để mở.");
+    var copyFirst = confirm("Bấm OK để copy link (sau đó dán vào Chrome/Edge để nghe phát âm).\n\nBấm Hủy để mở Google Translate nghe tạm từ \"" + textToSpeak + "\".");
+    if (copyFirst) {
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(window.location.href);
+          alert("Đã copy link! Dán vào Chrome hoặc Edge để mở và nghe phát âm.");
+        } else {
+          prompt("Copy link bên dưới và dán vào Chrome/Edge:", window.location.href);
+        }
+      } catch (e) {
+        prompt("Copy link bên dưới và dán vào Chrome/Edge:", window.location.href);
+      }
+    } else {
+      window.open("https://gentle-snickerdoodle-b94d62.netlify.app/" + encodeURIComponent(textToSpeak), "_blank");
+    }
+  }
+}
+
+function flipCard() {
+  const cardElement = document.getElementById("card");
+  cardElement.classList.toggle("flipped");
+  
+  if (!viewedCards.has(currentIndex)) {
+    viewedCards.add(currentIndex);
+    updateStats();
+  }
+}
+
+function markKnown() {
+  // Chỉ tính nếu thẻ chưa được đánh giá
+  if (!ratedCards.has(currentIndex)) {
+    knownCount++;
+    ratedCards.add(currentIndex);
+  }
+  hideRatingWarning();
+  updateStats();
+  nextCard();
+}
+
+function markUnknown() {
+  // Chỉ tính nếu thẻ chưa được đánh giá
+  if (!ratedCards.has(currentIndex)) {
+    unknownCount++;
+    ratedCards.add(currentIndex);
+  }
+  hideRatingWarning();
+  updateStats();
+  nextCard();
+}
+
+function nextCard() {
+  currentIndex++;
+  if (currentIndex >= currentCards.length) {
+    // Nếu đã đạt mốc 5/5 rồi thì không cần hiện thêm kết quả chung nữa
+    if (milestoneShown >= 5) return;
+    showResult();
+  } else {
+    showCard();
+  }
+}
+
+// Hàm cho nút "Tiếp →" - kiểm tra đã đánh giá chưa
+function goToNextCard() {
+  if (!ratedCards.has(currentIndex)) {
+    showRatingWarning();
+    return;
+  }
+  hideRatingWarning();
+  nextCard();
+}
+
+function showRatingWarning() {
+  const warning = document.getElementById("ratingWarning");
+  warning.style.display = "block";
+  // Tự động ẩn sau 3 giây
+  setTimeout(() => {
+    warning.style.display = "none";
+  }, 3000);
+}
+
+function hideRatingWarning() {
+  const warning = document.getElementById("ratingWarning");
+  warning.style.display = "none";
+}
+
+function prevCard() {
+  if (currentIndex > 0) {
+    currentIndex--;
+    hideRatingWarning();
+    showCard();
+  }
+}
+
+function shuffleCards() {
+  currentCards = shuffle([...currentCards]);
+  currentIndex = 0;
+  // Reset lại khi xáo trộn vì thứ tự thay đổi
+  knownCount = 0;
+  unknownCount = 0;
+  ratedCards.clear();
+  viewedCards.clear();
+  hideRatingWarning();
+  showCard();
+}
+
+function updateStats() {
+  // Hiển thị trạng thái đánh giá của thẻ hiện tại
+  const ratedStatus = ratedCards.has(currentIndex) ? " ✓" : "";
+  document.getElementById("counter").innerText = `Thẻ ${currentIndex + 1}/${currentCards.length}${ratedStatus}`;
+  document.getElementById("knownCount").innerText = `✅ Đã biết: ${knownCount}`;
+  document.getElementById("unknownCount").innerText = `❌ Chưa biết: ${unknownCount}`;
+  document.getElementById("totalCards").innerText = currentCards.length;
+  document.getElementById("viewedCards").innerText = viewedCards.size;
+  
+  const total = knownCount + unknownCount;
+  const accuracy = total > 0 ? Math.round((knownCount / total) * 100) : 0;
+  document.getElementById("accuracy").innerText = `${accuracy}%`;
+}
+
+function checkMilestone() {
+  const totalCards = currentCards.length;
+  if (!totalCards) return;
+
+  // Dải mốc dựa trên SỐ CÂU CHƯA BIẾT / tổng số thẻ
+  // Ví dụ 20 thẻ:
+  //  - 1: chưa biết ≥17  (>= 85%)
+  //  - 2: 13–16          (65–80%)
+  //  - 3: 9–12           (45–60%)
+  //  - 4: 5–8            (25–40%)
+  const unknownRatio = unknownCount / totalCards;
+  const percentKnown = Math.round((knownCount / totalCards) * 100);
+  const resultEl = document.getElementById("result");
+
+  if (unknownRatio >= 0.85 && milestoneShown < 1) {
+    document.getElementById("flashcard").style.display = "none";
+    resultEl.innerHTML = `
+      <div style="margin-bottom: 4px; font-size: 16px; font-weight: 700;">Tỉ lệ nhớ hiện tại: ${percentKnown}%</div>
+      <div style="font-size: 14px; color: rgba(15,23,42,0.7); margin-bottom: 8px;">
+        Đã biết: ${knownCount} | Chưa biết: ${unknownCount}
+      </div>
+      <img src="01.jpg" alt="01" style="max-width:260px; width:100%; border-radius:16px; margin-top:8px; box-shadow:0 10px 30px rgba(15,23,42,0.25);" />
+      <div style="margin-top: 8px; font-size: 14px; color: rgba(15,23,42,0.8);">
+        E làm gì vậy, e tấu hề à :)))))
+      </div>
+    `;
+    document.getElementById("resultActions").style.display = "flex";
+    document.getElementById("continueBtn").style.display = "inline-block";
+    document.getElementById("restartBtn").style.display = "none";
+    milestoneShown = 1;
+  } else if (unknownRatio >= 0.65 && milestoneShown < 2) {
+    document.getElementById("flashcard").style.display = "none";
+    resultEl.innerHTML = `
+      <div style="margin-bottom: 4px; font-size: 16px; font-weight: 700;">Tỉ lệ nhớ hiện tại: ${percentKnown}%</div>
+      <div style="font-size: 14px; color: rgba(15,23,42,0.7); margin-bottom: 8px;">
+        Đã biết: ${knownCount} | Chưa biết: ${unknownCount}
+      </div>
+      <img src="02.gif" alt="02" style="max-width:260px; width:100%; border-radius:16px; margin-top:8px; box-shadow:0 10px 30px rgba(15,23,42,0.25);" />
+      <div style="margin-top: 8px; font-size: 14px; color: rgba(15,23,42,0.8);">
+        Anh nhắc elm.
+      </div>
+    `;
+    document.getElementById("resultActions").style.display = "flex";
+    document.getElementById("continueBtn").style.display = "inline-block";
+    document.getElementById("restartBtn").style.display = "none";
+    milestoneShown = 2;
+  } else if (unknownRatio >= 0.45 && milestoneShown < 3) {
+    document.getElementById("flashcard").style.display = "none";
+    resultEl.innerHTML = `
+      <div style="margin-bottom: 4px; font-size: 16px; font-weight: 700;">Tỉ lệ nhớ hiện tại: ${percentKnown}%</div>
+      <div style="font-size: 14px; color: rgba(15,23,42,0.7); margin-bottom: 8px;">
+        Đã biết: ${knownCount} | Chưa biết: ${unknownCount}
+      </div>
+      <video src="03.mp4" controls style="max-width:260px; width:100%; border-radius:16px; margin-top:8px; box-shadow:0 10px 30px rgba(15,23,42,0.25);"></video>
+      <div style="margin-top: 8px; font-size: 14px; color: rgba(15,23,42,0.8);">
+        Cũng tạm, làm tiếp đi elm, anh hóng tiếp.
+      </div>
+    `;
+    document.getElementById("resultActions").style.display = "flex";
+    document.getElementById("continueBtn").style.display = "inline-block";
+    document.getElementById("restartBtn").style.display = "none";
+    milestoneShown = 3;
+  } else if (unknownRatio >= 0.25 && milestoneShown < 4) {
+    document.getElementById("flashcard").style.display = "none";
+    resultEl.innerHTML = `
+      <div style="margin-bottom: 4px; font-size: 16px; font-weight: 700;">Tỉ lệ nhớ hiện tại: ${percentKnown}%</div>
+      <div style="font-size: 14px; color: rgba(15,23,42,0.7); margin-bottom: 8px;">
+        Đã biết: ${knownCount} | Chưa biết: ${unknownCount}
+      </div>
+      <img src="04.jpg" alt="04" style="max-width:260px; width:100%; border-radius:16px; margin-top:8px; box-shadow:0 10px 30px rgba(15,23,42,0.25);" />
+      <div style="margin-top: 8px; font-size: 14px; color: rgba(15,23,42,0.8);">
+        Cố lên nữa sốp, sắp được rồi!
+      </div>
+    `;
+    document.getElementById("resultActions").style.display = "flex";
+    document.getElementById("continueBtn").style.display = "inline-block";
+    document.getElementById("restartBtn").style.display = "none";
+    milestoneShown = 4;
+  } else if ((knownCount + unknownCount === totalCards) && unknownCount <= 3 && milestoneShown < 5) {
+    // Mốc cuối: PHẢI làm hết thẻ và số câu CHƯA BIẾT <= 3
+    document.getElementById("flashcard").style.display = "none";
+    resultEl.innerHTML = `
+      <div style="margin-bottom: 8px; font-size: 18px; font-weight: 800;">🎯 Kết quả</div>
+      <div style="font-size: 16px; font-weight: 600; color: rgba(15,23,42,0.7); margin-top: 4px;">
+        Đã biết: ${knownCount} | Chưa biết: ${unknownCount}<br>
+        Tỉ lệ nhớ trên bộ hiện tại: ${percentKnown}%
+      </div>
+      <img src="05.jpg" alt="05" style="max-width:260px; width:100%; border-radius:16px; margin-top:12px; box-shadow:0 10px 30px rgba(15,23,42,0.25);" />
+      <div style="margin-top: 8px; font-size: 14px; color: rgba(15,23,42,0.8);">
+        Đúng là mấy con vợ của anh giỏi vl (nhắn a Đạt để a donate 10k 🐧 )
+      </div>
+    `;
+    document.getElementById("resultActions").style.display = "flex";
+    document.getElementById("continueBtn").style.display = "none";
+    document.getElementById("restartBtn").style.display = "inline-block";
+    milestoneShown = 5;
+  }
+}
+
+function continueFlashcards() {
+  document.getElementById("flashcard").style.display = "block";
+  document.getElementById("result").innerHTML = "";
+  document.getElementById("resultActions").style.display = "none";
+  document.getElementById("continueBtn").style.display = "none";
+}
+
+function updateNavButtons() {
+  document.getElementById("prevBtn").disabled = currentIndex === 0;
+  document.getElementById("nextBtn").disabled = currentIndex >= currentCards.length - 1;
+}
+
+function showResult() {
+  document.getElementById("flashcard").style.display = "none";
+
+  const totalCards = currentCards.length || (knownCount + unknownCount);
+  const unknownRatio = totalCards ? unknownCount / totalCards : 0;
+  const percentKnown = totalCards ? Math.round((knownCount / totalCards) * 100) : 0;
+  const resultEl = document.getElementById("result");
+
+  let html = "";
+
+  if (unknownRatio >= 0.85) {
+    // Tệ nhất: chưa biết rất nhiều
+    html = `
+      <div style="margin-bottom: 4px; font-size: 16px; font-weight: 700;">Tỉ lệ nhớ hiện tại: ${percentKnown}%</div>
+      <div style="font-size: 14px; color: rgba(15,23,42,0.7); margin-bottom: 8px;">
+        Đã biết: ${knownCount} | Chưa biết: ${unknownCount}
+      </div>
+      <img src="01.jpg" alt="01" style="max-width:260px; width:100%; border-radius:16px; margin-top:8px; box-shadow:0 10px 30px rgba(15,23,42,0.25);" />
+      <div style="margin-top: 8px; font-size: 14px; color: rgba(15,23,42,0.8);">
+        E làm gì vậy, e tấu hề à :))))
+        Không sao, làm lại vòng nữa là lên trình liền 
+      </div>
+    `;
+  } else if (unknownRatio >= 0.65) {
+    html = `
+      <div style="margin-bottom: 4px; font-size: 16px; font-weight: 700;">Tỉ lệ nhớ hiện tại: ${percentKnown}%</div>
+      <div style="font-size: 14px; color: rgba(15,23,42,0.7); margin-bottom: 8px;">
+        Đã biết: ${knownCount} | Chưa biết: ${unknownCount}
+      </div>
+      <img src="02.gif" alt="02" style="max-width:260px; width:100%; border-radius:16px; margin-top:8px; box-shadow:0 10px 30px rgba(15,23,42,0.25);" />
+      <div style="margin-top: 8px; font-size: 14px; color: rgba(15,23,42,0.8);">
+        Anh nhắc elm.
+      </div>
+    `;
+  } else if (unknownRatio >= 0.45) {
+    html = `
+      <div style="margin-bottom: 4px; font-size: 16px; font-weight: 700;">Tỉ lệ nhớ hiện tại: ${percentKnown}%</div>
+      <div style="font-size: 14px; color: rgba(15,23,42,0.7); margin-bottom: 8px;">
+        Đã biết: ${knownCount} | Chưa biết: ${unknownCount}
+      </div>
+      <img src="033.gif" controls style="max-width:260px; width:100%; border-radius:16px; margin-top:8px; box-shadow:0 10px 30px rgba(15,23,42,0.25);"></img>
+      <div style="margin-top: 8px; font-size: 14px; color: rgba(15,23,42,0.8);">
+        Cũng tạm, làm tiếp đi elm, anh hóng tiếp.
+      </div>
+    `;
+  } else if (unknownRatio >= 0.25) {
+    html = `
+      <div style="margin-bottom: 4px; font-size: 16px; font-weight: 700;">Tỉ lệ nhớ hiện tại: ${percentKnown}%</div>
+      <div style="font-size: 14px; color: rgba(15,23,42,0.7); margin-bottom: 8px;">
+        Đã biết: ${knownCount} | Chưa biết: ${unknownCount}
+      </div>
+      <img src="04.jpg" alt="04" style="max-width:260px; width:100%; border-radius:16px; margin-top:8px; box-shadow:0 10px 30px rgba(15,23,42,0.25);" />
+      <div style="margin-top: 8px; font-size: 14px; color: rgba(15,23,42,0.8);">
+        Cố lên nữa sốp, sắp được rồi!
+      </div>
+    `;
+  } else {
+    // Tốt nhất: chưa biết rất ít (<= ~3 trên tổng số thẻ)
+    html = `
+      <div style="margin-bottom: 8px; font-size: 18px; font-weight: 800;">🎯 Kết quả</div>
+      <div style="font-size: 16px; font-weight: 600; color: rgba(15,23,42,0.7); margin-top: 4px;">
+        Đã biết: ${knownCount} | Chưa biết: ${unknownCount}<br>
+        Tỉ lệ nhớ trên bộ hiện tại: ${percentKnown}%
+      </div>
+      <img src="05.jpg" alt="05" style="max-width:260px; width:100%; border-radius:16px; margin-top:12px; box-shadow:0 10px 30px rgba(15,23,42,0.25);" />
+      <div style="margin-top: 8px; font-size: 14px; color: rgba(15,23,42,0.8);">
+        Đúng là mấy con vợ của anh giỏi vl (nhắn a Đạt để a donate 10k 🐧 )
+      </div>
+    `;
+  }
+
+  resultEl.innerHTML = html;
+  document.getElementById("resultActions").style.display = "flex";
+  document.getElementById("continueBtn").style.display = "none";
+  document.getElementById("restartBtn").style.display = "inline-block";
+}
+
+function shuffle(a) {
+  const arr = [...a];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+</script>
+
+</body>
+</html>
